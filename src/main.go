@@ -12,15 +12,17 @@ import (
 )
 
 const (
-	DSN      = "renwu"
-	SERVER   = "222.24.24.91"
-	USERNAME = "Admin"
-	PASSWORD = ""
-	FilePath = "C:/QianDao"
-	Filename = "QianDao.csv"
-	DATABASE = "renwu2"
-	QIANZHUI = "rmsTA_"
-	ALL_NAME = "AllMessge"
+	DSN        = "renwu"
+	SERVER     = "222.24.24.91"
+	USERNAME   = "Admin"
+	PASSWORD   = ""
+	FilePath   = "C:/QianDao"
+	Filename   = "QianDao.csv"
+	DATABASE   = "renwu2"
+	QIANZHUI   = "rmsTA_"
+	ALL_NAME   = "AllMessge"
+	UpdateHour = 2
+	UpdateMin  = 10
 )
 
 type User struct {
@@ -52,18 +54,24 @@ type Dept struct {
 var dept map[int]Dept = make(map[int]Dept, 0)
 var deptjud map[string]bool = make(map[string]bool, 0)
 
+var Update bool
+
 func main() {
+	for true {
+		createHomeDir()
 
-	createHomeDir()
+		//获取数据
+		getData()
 
-	//获取数据
-	getData()
+		//创建各部门的目录
+		createPartDir()
 
-	//创建各部门的目录
-	createPartDir()
+		message()
+		//	if time.Now().Hour() != 1 && time.Now().Minute() != 41 {
+		time.Sleep(60 * time.Second)
+		//	}
 
-	message()
-
+	}
 }
 
 func createHomeDir() {
@@ -81,20 +89,26 @@ func createHomeDir() {
 //将信息汇总在这里
 func message() {
 	type mesg []string
-
 	mess := make(map[string]mesg, 0)
 	messkey := make(map[string]int)
 	infolen := len(info)
 	deptmaplen := len(dept)
+	m_all := make(mesg, infolen)
+	k := 0
 	for j := 0; j < deptmaplen; j++ {
 		m := make(mesg, infolen)
 		for i := 0; i < infolen; i++ {
-			//fmt.Println(v.uid)
-			fmt.Println(user[info[i].uid].deptment, user[info[i].uid].userid, info[i].inout, info[i].date, info[i].time)
+			// fmt.Println("=============================================================================================")
+			// fmt.Println(user[info[i].uid].deptment, user[info[i].uid].userid, info[i].inout, info[i].date, info[i].time)
+			message := user[info[i].uid].deptment + "," + user[info[i].uid].userid + "," + info[i].inout + "," + info[i].date + "," + info[i].time + "\n"
+			if k != infolen {
+				m_all[k] = message
+				k++
+
+			}
 
 			if user[info[i].uid].deptment == dept[j].deptnum {
 
-				message := user[info[i].uid].deptment + "," + user[info[i].uid].userid + "," + info[i].inout + "," + info[i].date + "," + info[i].time + "\n"
 				// fmt.Println("................................")
 				m[messkey[dept[j].deptnum]] = message
 
@@ -107,8 +121,48 @@ func message() {
 
 		mess[dept[j].deptnum] = m
 		write(dept[j].deptnum, m, messkey[dept[j].deptnum])
-
+		fmt.Println("----------------------------")
+		fmt.Println(m)
+		fmt.Println("----------------------------")
+		// fmt.Println("===", dept[j].deptnum, m, messkey[dept[j].deptnum])
 	}
+	writeAll(m_all)
+	if Update {
+		Update = false
+	}
+	/*
+		if Update {
+			for j := 0; j < deptmaplen; j++ {
+				m := make(mesg, infolen)
+				for i := 0; i < infolen; i++ {
+					//fmt.Println(v.uid)
+					fmt.Println(user[info[i].uid].deptment, user[info[i].uid].userid, info[i].inout, info[i].date, info[i].time)
+					message := user[info[i].uid].deptment + "," + user[info[i].uid].userid + "," + info[i].inout + "," + info[i].date + "," + info[i].time + "\n"
+					if k != infolen {
+						m_all[k] = message
+						k++
+
+					}
+
+					if user[info[i].uid].deptment == dept[j].deptnum {
+
+						// fmt.Println("................................")
+						m[messkey[dept[j].deptnum]] = message
+
+						messkey[dept[j].deptnum]++
+					} else {
+						continue
+					}
+					//	write(dept[j].deptnum, m, messkey[dept[j].deptnum])
+
+				}
+
+				mess[dept[j].deptnum] = m
+				write(dept[j].deptnum, m, messkey[dept[j].deptnum])
+				writeAll(m_all)
+			}
+		}
+	*/
 }
 
 func writeAll(mess []string) {
@@ -133,8 +187,12 @@ func writeAll(mess []string) {
 	}
 	file.Close()
 
-	//file, err = os.OpenFile(filename+"", flag, perm)
+	file, err = os.OpenFile(filename, os.O_CREATE, os.ModePerm)
 
+	for _, v := range mess {
+		file.WriteString(v)
+	}
+	defer file.Close()
 }
 
 //从数据库获取数据，并进行相应的处理
@@ -192,54 +250,104 @@ func getData() {
 		}
 	}
 
-	// stmt, err = conn.Prepare("SELECT checktype,checktime,userid from CHECKINOUT ")
-	stmt, err = conn.Prepare("SELECT checktype,checktime,userid from CHECKINOUT where DateDiff(dd,CHECKTIME,getdate())=0")
-	if err != nil {
-		fmt.Println("Query Error", err, stmt)
-		return
+	if time.Now().Hour() == UpdateHour && time.Now().Minute() == UpdateMin {
+		Update = true
 	}
-	// fmt.Println(stmt)
-	defer stmt.Close()
+	if Update {
+		stmt, err = conn.Prepare("SELECT checktype,checktime,userid from CHECKINOUT where DateDiff(dd,CHECKTIME,getdate())=1")
+		if err != nil {
+			fmt.Println("Query Error", err, stmt)
+			return
+		}
+		// fmt.Println(stmt)
+		defer stmt.Close()
 
-	row, err = stmt.Query()
-	if err != nil {
-		fmt.Println("Query Error", err)
-		return
-	}
-	// fmt.Println(row)
-	defer row.Close()
+		row, err = stmt.Query()
+		if err != nil {
+			fmt.Println("Query Error", err)
+			return
+		}
+		// fmt.Println(row)
+		defer row.Close()
 
-	index := 0
-	for row.Next() {
-		var checktype string
-		var checktime string
-		var uid string
-		if err := row.Scan(&checktype, &checktime, &uid); err == nil {
-			fmt.Println(checktype, checktime, uid)
-			// fmt.Println("***************...")
+		index := 0
+		for row.Next() {
+			var checktype string
+			var checktime string
+			var uid string
+			if err := row.Scan(&checktype, &checktime, &uid); err == nil {
+				fmt.Println(checktype, checktime, uid)
+				// fmt.Println("***************...")
 
-			switch checktype {
-			case "I":
-			case "O":
-			default:
-				continue
+				switch checktype {
+				case "I":
+				case "O":
+				default:
+					continue
+				}
+
+				i, _ := strconv.ParseInt(uid, 10, 64)
+				j := int(i)
+				var b Info
+				b.uid = j
+				b.inout = checktype
+				b.date = checktime[0:4] + checktime[5:7] + checktime[8:10]
+				b.time = checktime[11:13] + checktime[14:16]
+				info[index] = b
+				index++
 			}
 
-			i, _ := strconv.ParseInt(uid, 10, 64)
-			j := int(i)
-			var b Info
-			b.uid = j
-			b.inout = checktype
-			b.date = checktime[0:4] + checktime[5:7] + checktime[8:10]
-			b.time = checktime[11:13] + checktime[14:16]
-			info[index] = b
-			index++
 		}
+		fmt.Printf("%s\n", "finish")
+		return
+	} else {
+		// stmt, err = conn.Prepare("SELECT checktype,checktime,userid from CHECKINOUT ")
+		stmt, err = conn.Prepare("SELECT checktype,checktime,userid from CHECKINOUT where DateDiff(dd,CHECKTIME,getdate())=0")
+		if err != nil {
+			fmt.Println("Query Error", err, stmt)
+			return
+		}
+		// fmt.Println(stmt)
+		defer stmt.Close()
 
+		row, err = stmt.Query()
+		if err != nil {
+			fmt.Println("Query Error", err)
+			return
+		}
+		// fmt.Println(row)
+		defer row.Close()
+
+		index := 0
+		for row.Next() {
+			var checktype string
+			var checktime string
+			var uid string
+			if err := row.Scan(&checktype, &checktime, &uid); err == nil {
+				fmt.Println(checktype, checktime, uid)
+				// fmt.Println("***************...")
+
+				switch checktype {
+				case "I":
+				case "O":
+				default:
+					continue
+				}
+
+				i, _ := strconv.ParseInt(uid, 10, 64)
+				j := int(i)
+				var b Info
+				b.uid = j
+				b.inout = checktype
+				b.date = checktime[0:4] + checktime[5:7] + checktime[8:10]
+				b.time = checktime[11:13] + checktime[14:16]
+				info[index] = b
+				index++
+			}
+		}
+		fmt.Printf("%s\n", "finish====")
+		return
 	}
-	fmt.Printf("%s\n", "finish")
-	return
-
 }
 
 //创建部门目录
@@ -279,7 +387,14 @@ func createFile(path, name string) {
 
 //写入相应的文件
 func write(deptment string, message []string, lenth int) {
-	filename := QIANZHUI + time.Now().String()[0:4] + time.Now().String()[5:7] + time.Now().String()[8:10] + ".csv"
+	var filename string
+	if Update {
+		filename = QIANZHUI + info[0].date + ".csv"
+		fmt.Println(filename)
+	} else {
+		filename = QIANZHUI + time.Now().String()[0:4] + time.Now().String()[5:7] + time.Now().String()[8:10] + ".csv"
+	}
+
 	filepath := FilePath + "/" + deptment + "/" + filename
 
 	file, err := os.Open(filepath)
@@ -293,9 +408,15 @@ func write(deptment string, message []string, lenth int) {
 	}
 
 	file, err = os.OpenFile(filepath, os.O_WRONLY, os.ModePerm)
+	fmt.Println(lenth)
 	for i := 0; i < lenth; i++ {
 		file.WriteString(message[i])
+		fmt.Println(message[i])
 	}
 
 	file.Close()
+}
+
+func UpdateFile() {
+
 }
