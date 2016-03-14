@@ -34,3 +34,76 @@
 .csv: The filename, directory name, or volume label syntax is incorrect.
 2016-03-14 15:47:52.4161568 +0800 CST strconv.ParseInt: parsing "": invalid syntax
 2016-03-14 15:49:24.0833999 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 16:00:05.8231053 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 16:17:53.7351864 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 16:42:21.4541351 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 16:51:52.8218155 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 16:52:07.0256279 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 16:52:53.9813136 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 16:53:26.9471992 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 16:53:41.7730471 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 16:55:53.2875693 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 17:43:55.719435 +0800 CST open C:/QianDao: The system cannot find the file specified.
+2016-03-14 17:43:55.7204351 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 17:48:43.7969121 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 17:52:09.6026835 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 17:52:43.0975993 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 17:55:04.1166651 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 17:56:35.4248877 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 17:57:23.0306106 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 17:58:49.9975848 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 18:00:11.0572211 +0800 CST Query Error08001 [Microsoft][ODBC SQL Server Driver][DBNETLIB]SQL Server 不存在或访问被拒绝[Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()).
+2016-03-14 18:04:09.9978878 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 18:06:14.4630068 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 18:06:59.6645921 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 18:11:07.0217402 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 18:13:39.1334405 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 18:14:35.2226486 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 18:17:38.29912 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 18:24:27.518526 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 18:29:27.6386919 +0800 CST open C:/QianDao: The system cannot find the file specified.
+2016-03-14 18:29:27.6396919 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 18:31:20.1891294 +0800 CST Query Error08001 [Microsoft][ODBC SQL Server Driver][DBNETLIB]SQL Server 不存在或访问被拒绝[Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()).
+2016-03-14 18:32:55.1315598 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 18:33:16.1457617 +0800 CST Query Error08001 [Microsoft][ODBC SQL Server Driver][DBNETLIB]SQL Server 不存在或访问被拒绝[Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()).
+2016-03-14 18:33:16.1467618 +0800 CST Create Dir C:/QianDao/AllMessage Error!
+2016-03-14 18:33:16.1467618 +0800 CST Create File C:/QianDao/AllMessage/rmsTA_2016-03-14AllMessge.csv Error!
+2016-03-14 18:33:16.1467618 +0800 CST open C:/QianDao/AllMessage/rmsTA_2016-03-14AllMessge.csv: The system cannot find the path specified.
+2016-03-14 18:34:07.8537192 +0800 CST open C:/QianDao: The system cannot find the file specified.
+2016-03-14 18:34:07.8547193 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 18:35:17.7337161 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 18:38:42.3784212 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 18:43:45.416754 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 18:47:56.3781081 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 21:58:28.1869702 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 21:59:04.8050646 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:00:26.9617637 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:03:04.0897509 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:04:25.4554048 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:04:54.0140382 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:06:25.1242494 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:06:47.9555553 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:08:36.504764 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:10:14.4573665 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:11:58.0812935 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:12:23.9397725 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:14:15.9741805 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:15:27.3362622 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:16:16.1230526 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:17:26.5840828 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:18:23.3813314 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:19:17.9954551 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:21:21.2775065 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:21:49.7191332 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:22:12.7184487 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:22:40.0070095 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:23:06.0584996 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:24:55.6497679 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:25:28.3426378 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:26:16.1863743 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:26:49.5332816 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:28:27.2988735 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:28:58.7526726 +0800 CST open C:/QianDao: The system cannot find the file specified.
+2016-03-14 22:28:58.7536726 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:29:16.4276835 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 22:29:42.8821966 +0800 CST strconv.ParseInt: parsing "": invalid syntax

@@ -1,28 +1,27 @@
 package main
 
 import (
+	"bufio"
 	"database/sql"
 	"fmt"
-	// "go-odbc"
 	_ "go-odbc/driver"
-	"strconv"
-	// "strings"
-	"bufio"
 	"io"
 	"os"
+	"strconv"
 	"time"
 )
 
+//获取的用户信息
 type User struct {
 	uid      int
-	userid   string
+	userid   int
 	deptment string
 }
 
+//用户组成的一个查询字典
 var user map[int]User = make(map[int]User, 0)
 
-//var user map[int]User = make(map[int]User, 0)
-
+//获取签到信息
 type Info struct {
 	uid   int
 	inout string
@@ -30,44 +29,36 @@ type Info struct {
 	time  string
 }
 
+//签到信息记录的字典
 var info map[int]Info = make(map[int]Info, 0)
 
-//var info map[int]Info = make(map[int]Info, 0)
-
+//获取部门信息
 type Dept struct {
 	deptnum string
 	isExist bool
 }
 
+//部门信息组成的字典
 var dept map[int]Dept = make(map[int]Dept, 0)
+
+//部门存在的凭证，用来创建对应的目录
 var deptjud map[string]bool = make(map[string]bool, 0)
 
+//配置信息字典
 var Conf map[string]string = make(map[string]string)
 
+//更新标识
 var Update bool
 
-/*
-const (
-	FilePath        = "C:/QianDao"
-	DSN      string = "renwu"
-	SERVER   string = "222.24.24.91"
-	USERNAME string = "Admin"
-	PASSWORD string = ""
+//var localDebug bool = true
 
-	DATABASE   string = "renwu2"
-	QIANZHUI   string = "rmsTA_"
-	ALL_NAME   string = "AllMessge"
-	UpdateHour int    = 00
-	UpdateMin  int    = 01
-)
-*/
-
+// 配置信息全局变量（有默认值）
 var (
 	DSN        string = "renwu"
 	SERVER     string = "222.24.24.91"
 	USERNAME   string = "Admin"
 	PASSWORD   string = ""
-	FilePath          = "C:/QianDao"
+	FilePath   string = "C:/QianDao"
 	DATABASE   string = "renwu2"
 	QIANZHUI   string = "rmsTA_"
 	ALL_NAME   string = "AllMessge"
@@ -75,12 +66,17 @@ var (
 	UpdateMin  int    = 01
 )
 
+// 主函数
 func main() {
+	//localDebug = false
 
+	// 创建签到数据存放主目录
 	createHomeDir()
+	// 创建配置文件目录
 	readConfDir()
+	// 加载配置文件
 	initConf()
-	fmt.Println(Conf)
+	// fmt.Println(Conf)
 	for true {
 
 		//获取数据
@@ -89,18 +85,16 @@ func main() {
 		//创建各部门的目录
 		createPartDir()
 
+		// 数据处理引擎，并且写入文档
 		message()
-		//	if time.Now().Hour() != 1 && time.Now().Minute() != 41 {
+
+		// 程序休眠时间
 		time.Sleep(60 * time.Second)
-		//	}
 
 	}
 }
 
-func defaultConf() {
-
-}
-
+// 加载配置文件函数
 func initConf() {
 	if Conf["DSN"] != "" {
 		DSN = Conf["DSN"]
@@ -137,52 +131,8 @@ func initConf() {
 	UpdateMin = int(Min)
 }
 
+//创建日志文件目录,读取配置文件目录
 func readConfDir() {
-	dirName := "conf"
-	dir, err := os.Open(dirName)
-	if err != nil {
-		err := os.Mkdir(dirName, os.ModePerm)
-		if err != nil {
-			writeErrorLog(err.Error() + "  Create Conf Dir " + FilePath + " Error")
-		}
-	}
-	dir.Close()
-
-	fileName := dirName + "/" + "config.txt"
-	file, err := os.Open(fileName)
-	if err != nil {
-		writeErrorLog(err.Error())
-		return
-	}
-	defer file.Close()
-
-	inputReader := bufio.NewReader(file)
-	lineCounter := 0
-	for {
-		inputString, readerError := inputReader.ReadString('\n')
-		//inputString,  := inputReader.ReadBytes('\n')             if readerError == io.EOF {
-		//fmt.Printf("%d : %s", lineCounter, inputString)
-		lenStr := len(inputString)
-		for i, v := range inputString {
-			if inputString[0:2] == "//" {
-				continue
-			}
-			if v == '=' {
-				Conf[inputString[:i]] = inputString[i+1 : lenStr-2]
-			}
-		}
-		if readerError == io.EOF {
-			//fmt.Println(Conf)
-			return
-		}
-
-		lineCounter++
-	}
-
-}
-
-func createHomeDir() {
-	// fmt.Println(FilePath)
 	logPath := "log"
 	logdir, err := os.Open(logPath)
 	if err != nil {
@@ -214,6 +164,50 @@ func createHomeDir() {
 	}
 	logdir.Close()
 
+	dirName := "conf"
+	dir, err := os.Open(dirName)
+	if err != nil {
+		err := os.Mkdir(dirName, os.ModePerm)
+		if err != nil {
+			writeErrorLog(err.Error() + "  Create Conf Dir " + FilePath + " Error")
+		}
+	}
+	dir.Close()
+
+	fileName := dirName + "/" + "config.txt"
+	file, err := os.Open(fileName)
+	if err != nil {
+		writeErrorLog(err.Error())
+		return
+	}
+	defer file.Close()
+
+	inputReader := bufio.NewReader(file)
+	lineCounter := 0
+	for {
+		inputString, readerError := inputReader.ReadString('\n')
+		lenStr := len(inputString)
+		for i, v := range inputString {
+			if inputString[0:2] == "//" {
+				continue
+			}
+			if v == '=' {
+				Conf[inputString[:i]] = inputString[i+1 : lenStr-2]
+			}
+		}
+		if readerError == io.EOF {
+			//fmt.Println(Conf)
+			return
+		}
+
+		lineCounter++
+	}
+
+}
+
+//以及程序存放数据主目录
+func createHomeDir() {
+	// fmt.Println(FilePath)
 	dir, err := os.Open(FilePath)
 	if err != nil {
 		writeErrorLog(err.Error())
@@ -237,7 +231,7 @@ func message() {
 	for j := 0; j < deptmaplen; j++ {
 		m := make(mesg, infolen)
 		for i := 0; i < infolen; i++ {
-			message := user[info[i].uid].deptment + "," + user[info[i].uid].userid + "," + info[i].inout + "," + info[i].date + "," + info[i].time + "\n"
+			message := user[info[i].uid].deptment + "," + strconv.Itoa(user[info[i].uid].userid) + "," + info[i].inout + "," + info[i].date + "," + info[i].time + "\n"
 			if k != infolen {
 				m_all[k] = message
 				k++
@@ -260,6 +254,8 @@ func message() {
 		write(dept[j].deptnum, m, messkey[dept[j].deptnum])
 		writeRunLog("Write Department " + dept[j].deptnum + " success.")
 	}
+	//	writeRunLog("Write Department  success.")
+
 	writeAll(m_all)
 	if Update {
 		writeRunLog("Update lastDay Success.")
@@ -267,6 +263,7 @@ func message() {
 	}
 }
 
+//将当天所有部门的信息写入汇总文件
 func writeAll(mess []string) {
 	dirname := FilePath + "/" + "AllMessage"
 	dir, err := os.Open(dirname)
@@ -284,6 +281,7 @@ func writeAll(mess []string) {
 		if err != nil {
 			writeErrorLog("Create File " + filename + " Error!")
 		}
+
 		file.Close()
 
 	}
@@ -293,10 +291,11 @@ func writeAll(mess []string) {
 	if err != nil {
 		writeErrorLog(err.Error())
 	}
+	file.WriteString("deptnum" + "," + "userid" + "," + "in/out" + "," + "date" + "," + "time" + "\n")
 	for _, v := range mess {
 		file.WriteString(v)
 	}
-	writeRunLog("WriteAllMessage Success.")
+	writeRunLog("Write Day AllMessage Success.")
 	defer file.Close()
 }
 
@@ -332,7 +331,7 @@ func getData() {
 
 	for row.Next() {
 		var deptnum string
-		var id string
+		var id int
 		var uid string
 		var dept1 Dept
 		if err := row.Scan(&deptnum, &id, &uid); err == nil {
@@ -344,16 +343,30 @@ func getData() {
 				dept[flag] = dept1
 				flag++
 			}
-
-			i, _ := strconv.ParseInt(uid, 10, 64)
+			/*
+				if localDebug == true {
+					fmt.Println(dept1)
+				}
+			*/
+			// fmt.Println("--------------------")
+			i, _ := strconv.ParseInt(uid, 10, 32)
 			j := int(i)
+			//			k := int(id)
 			var a User
 			a.uid = j
 			a.userid = id
 			a.deptment = deptnum
 			user[j] = a
+			//			fmt.Println(a)
 		}
+		/*
+			if localDebug == true {
+				fmt.Println(user)
+			}
+		*/
+
 		fmt.Println(user)
+
 	}
 
 	if time.Now().Hour() == UpdateHour && time.Now().Minute() == UpdateMin {
@@ -382,7 +395,11 @@ func getData() {
 			var checktime string
 			var uid string
 			if err := row.Scan(&checktype, &checktime, &uid); err == nil {
-
+				/*
+					if localDebug == true {
+						fmt.Println(checktype, checktime, uid)
+					}
+				*/
 				switch checktype {
 				case "I":
 				case "O":
@@ -400,10 +417,15 @@ func getData() {
 				info[index] = b
 				index++
 			}
-			//			fmt.Println(info)
 
 		}
+		/*
+			if localDebug == true {
+				fmt.Println(info)
+			}
+		*/
 		fmt.Printf("%s\n", "finish")
+
 		return
 	} else {
 		// stmt, err = conn.Prepare("SELECT checktype,checktime,userid from CHECKINOUT ")
@@ -450,6 +472,12 @@ func getData() {
 				index++
 			}
 		}
+		//	fmt.Println(info)
+		/*
+			if localDebug == true {
+				fmt.Println(info)
+			}
+		*/
 		//fmt.Printf("%s\n", "finish====")
 		return
 	}
@@ -504,7 +532,7 @@ func write(deptment string, message []string, lenth int) {
 
 	if err != nil {
 		file, _ = os.Create(filepath)
-		file.WriteString("deptnum\t" + "," + "userid\t" + "," + "in/out\t" + "," + "date\t" + "," + "time\t" + "\n")
+		file.WriteString("deptnum" + "," + "userid" + "," + "in/out" + "," + "date" + "," + "time" + "\n")
 		file.Close()
 	} else {
 		file.Close()
@@ -520,6 +548,7 @@ func write(deptment string, message []string, lenth int) {
 	file.Close()
 }
 
+//错误日志记录函数
 func writeErrorLog(logMessage string) {
 	logfile := "log/error/" + "log_" + time.Now().String()[0:10] + ".log"
 	file, err := os.OpenFile(logfile, os.O_APPEND|os.O_CREATE, os.ModePerm)
@@ -531,6 +560,7 @@ func writeErrorLog(logMessage string) {
 	defer file.Close()
 }
 
+//运行日志记录函数
 func writeRunLog(logMessage string) {
 	logfile := "log/run/" + "log_" + time.Now().String()[0:10] + ".log"
 	file, err := os.OpenFile(logfile, os.O_APPEND|os.O_CREATE, os.ModePerm)
