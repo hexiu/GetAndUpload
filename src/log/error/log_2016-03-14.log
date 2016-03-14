@@ -1,0 +1,36 @@
+2016-03-14 14:57:25.9830548 +0800 CST open C:/QianDao: The system cannot find the file specified.
+2016-03-14 15:37:57.3391204 +0800 CST strconv.ParseInt: parsing "12\r\n": invalid syntax
+2016-03-14 15:38:15.5971647 +0800 CST Query Error08001 [Microsoft][ODBC SQL Server Driver][DBNETLIB]SQL Server 不存在或访问被拒绝[Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()).
+2016-03-14 15:38:15.5981647 +0800 CST Create File C:/QianDao/AllMessage/rmsTA_
+2016-03-14AllMessge
+.csv Error!
+2016-03-14 15:38:15.5981647 +0800 CST open C:/QianDao/AllMessage/rmsTA_
+2016-03-14AllMessge
+.csv: The filename, directory name, or volume label syntax is incorrect.
+2016-03-14 15:39:50.5295945 +0800 CST strconv.ParseInt: parsing "12\r\n": invalid syntax
+2016-03-14 15:41:36.8116735 +0800 CST strconv.ParseInt: parsing "12\r\n": invalid syntax
+2016-03-14 15:43:00.5324621 +0800 CST strconv.ParseInt: parsing "12\r": invalid syntax
+2016-03-14 15:43:18.7895063 +0800 CST Query Error08001 [Microsoft][ODBC SQL Server Driver][DBNETLIB]SQL Server 不存在或访问被拒绝[Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()).
+2016-03-14 15:43:18.7895063 +0800 CST Create File C:/QianDao/AllMessage/rmsTA_2016-03-14AllMessge.csv Error!
+2016-03-14 15:43:18.7905064 +0800 CST open C:/QianDao/AllMessage/rmsTA_2016-03-14AllMessge.csv: The filename, directory name, or volume label syntax is incorrect.
+2016-03-14 15:43:24.4758315 +0800 CST strconv.ParseInt: parsing "12\r": invalid syntax
+2016-03-14 15:44:10.9574901 +0800 CST strconv.ParseInt: parsing "12\r": invalid syntax
+2016-03-14 15:44:31.4136602 +0800 CST strconv.ParseInt: parsing "12\r": invalid syntax
+2016-03-14 15:44:46.4425198 +0800 CST strconv.ParseInt: parsing "12\r\n": invalid syntax
+2016-03-14 15:45:48.9560953 +0800 CST strconv.ParseInt: parsing "12\r\n": invalid syntax
+2016-03-14 15:46:07.2131396 +0800 CST Query Error08001 [Microsoft][ODBC SQL Server Driver][DBNETLIB]SQL Server 不存在或访问被拒绝[Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()).
+2016-03-14 15:46:07.2131396 +0800 CST Create File C:/QianDao/AllMessage/rmsTA_
+2016-03-14AllMessge
+.csv Error!
+2016-03-14 15:46:07.2141396 +0800 CST open C:/QianDao/AllMessage/rmsTA_
+2016-03-14AllMessge
+.csv: The filename, directory name, or volume label syntax is incorrect.
+2016-03-14 15:47:25.4656154 +0800 CST Query Error08001 [Microsoft][ODBC SQL Server Driver][DBNETLIB]SQL Server 不存在或访问被拒绝[Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()).
+2016-03-14 15:47:25.4656154 +0800 CST Create File C:/QianDao/AllMessage/rmsTA_
+2016-03-14AllMessge
+.csv Error!
+2016-03-14 15:47:25.4666154 +0800 CST open C:/QianDao/AllMessage/rmsTA_
+2016-03-14AllMessge
+.csv: The filename, directory name, or volume label syntax is incorrect.
+2016-03-14 15:47:52.4161568 +0800 CST strconv.ParseInt: parsing "": invalid syntax
+2016-03-14 15:49:24.0833999 +0800 CST strconv.ParseInt: parsing "": invalid syntax

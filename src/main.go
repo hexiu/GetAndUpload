@@ -7,22 +7,10 @@ import (
 	_ "go-odbc/driver"
 	"strconv"
 	// "strings"
+	"bufio"
+	"io"
 	"os"
 	"time"
-)
-
-const (
-	DSN        = "renwu"
-	SERVER     = "222.24.24.91"
-	USERNAME   = "Admin"
-	PASSWORD   = ""
-	FilePath   = "C:/QianDao"
-	Filename   = "QianDao.csv"
-	DATABASE   = "renwu2"
-	QIANZHUI   = "rmsTA_"
-	ALL_NAME   = "AllMessge"
-	UpdateHour = 2
-	UpdateMin  = 10
 )
 
 type User struct {
@@ -54,11 +42,46 @@ type Dept struct {
 var dept map[int]Dept = make(map[int]Dept, 0)
 var deptjud map[string]bool = make(map[string]bool, 0)
 
+var Conf map[string]string = make(map[string]string)
+
 var Update bool
 
+/*
+const (
+	FilePath        = "C:/QianDao"
+	DSN      string = "renwu"
+	SERVER   string = "222.24.24.91"
+	USERNAME string = "Admin"
+	PASSWORD string = ""
+
+	DATABASE   string = "renwu2"
+	QIANZHUI   string = "rmsTA_"
+	ALL_NAME   string = "AllMessge"
+	UpdateHour int    = 00
+	UpdateMin  int    = 01
+)
+*/
+
+var (
+	DSN        string = "renwu"
+	SERVER     string = "222.24.24.91"
+	USERNAME   string = "Admin"
+	PASSWORD   string = ""
+	FilePath          = "C:/QianDao"
+	DATABASE   string = "renwu2"
+	QIANZHUI   string = "rmsTA_"
+	ALL_NAME   string = "AllMessge"
+	UpdateHour int    = 00
+	UpdateMin  int    = 01
+)
+
 func main() {
+
+	createHomeDir()
+	readConfDir()
+	initConf()
+	fmt.Println(Conf)
 	for true {
-		createHomeDir()
 
 		//获取数据
 		getData()
@@ -74,16 +97,132 @@ func main() {
 	}
 }
 
-func createHomeDir() {
-	dir, err := os.Open(FilePath)
+func defaultConf() {
+
+}
+
+func initConf() {
+	if Conf["DSN"] != "" {
+		DSN = Conf["DSN"]
+
+	}
+	if Conf["SERVER"] != "" {
+		SERVER = Conf["SERVER"]
+	}
+	if Conf["USERNAME"] != "" {
+		USERNAME = Conf["USERNAME"]
+	}
+	if Conf["PASSWORD"] != "" {
+		PASSWORD = Conf["PASSWORD"]
+	}
+
+	if Conf["DATABASE"] != "" {
+		DATABASE = Conf["DATABASE"]
+	}
+	if Conf["QIANZHUI"] != "" {
+		QIANZHUI = Conf["QIANZHUI"]
+	}
+	if Conf["ALL_NAME"] != "" {
+		ALL_NAME = Conf["ALL_NAME"]
+	}
+	Hour, err := strconv.ParseInt(Conf["UpdateHour"], 10, 32)
 	if err != nil {
-		err := os.Mkdir(FilePath, os.ModePerm)
+		writeErrorLog(err.Error())
+	}
+	Min, err := strconv.ParseInt(Conf["UpdateMin"], 10, 32)
+	if err != nil {
+		writeErrorLog(err.Error())
+	}
+	UpdateHour = int(Hour)
+	UpdateMin = int(Min)
+}
+
+func readConfDir() {
+	dirName := "conf"
+	dir, err := os.Open(dirName)
+	if err != nil {
+		err := os.Mkdir(dirName, os.ModePerm)
 		if err != nil {
-			fmt.Println("Create Home Dir " + FilePath + " Error")
+			writeErrorLog(err.Error() + "  Create Conf Dir " + FilePath + " Error")
 		}
 	}
 	dir.Close()
 
+	fileName := dirName + "/" + "config.txt"
+	file, err := os.Open(fileName)
+	if err != nil {
+		writeErrorLog(err.Error())
+		return
+	}
+	defer file.Close()
+
+	inputReader := bufio.NewReader(file)
+	lineCounter := 0
+	for {
+		inputString, readerError := inputReader.ReadString('\n')
+		//inputString,  := inputReader.ReadBytes('\n')             if readerError == io.EOF {
+		//fmt.Printf("%d : %s", lineCounter, inputString)
+		lenStr := len(inputString)
+		for i, v := range inputString {
+			if inputString[0:2] == "//" {
+				continue
+			}
+			if v == '=' {
+				Conf[inputString[:i]] = inputString[i+1 : lenStr-2]
+			}
+		}
+		if readerError == io.EOF {
+			//fmt.Println(Conf)
+			return
+		}
+
+		lineCounter++
+	}
+
+}
+
+func createHomeDir() {
+	// fmt.Println(FilePath)
+	logPath := "log"
+	logdir, err := os.Open(logPath)
+	if err != nil {
+		writeErrorLog(err.Error())
+		err := os.Mkdir(logPath, os.ModePerm)
+		if err != nil {
+			writeErrorLog("Create Log Dir " + logPath + " Error")
+		}
+	}
+	logdir.Close()
+	logPath = "log/run"
+	logdir, err = os.Open(logPath)
+	if err != nil {
+		writeErrorLog(err.Error())
+		err := os.Mkdir(logPath, os.ModePerm)
+		if err != nil {
+			writeErrorLog("Create Log Dir " + logPath + " Error")
+		}
+	}
+	logdir.Close()
+	logPath = "log/error"
+	logdir, err = os.Open(logPath)
+	if err != nil {
+		writeErrorLog(err.Error())
+		err := os.Mkdir(logPath, os.ModePerm)
+		if err != nil {
+			writeErrorLog("Create Log Dir " + logPath + " Error")
+		}
+	}
+	logdir.Close()
+
+	dir, err := os.Open(FilePath)
+	if err != nil {
+		writeErrorLog(err.Error())
+		err := os.Mkdir(FilePath, os.ModePerm)
+		if err != nil {
+			writeErrorLog("Create Home Dir " + FilePath + " Error")
+		}
+	}
+	dir.Close()
 }
 
 //将信息汇总在这里
@@ -98,8 +237,6 @@ func message() {
 	for j := 0; j < deptmaplen; j++ {
 		m := make(mesg, infolen)
 		for i := 0; i < infolen; i++ {
-			// fmt.Println("=============================================================================================")
-			// fmt.Println(user[info[i].uid].deptment, user[info[i].uid].userid, info[i].inout, info[i].date, info[i].time)
 			message := user[info[i].uid].deptment + "," + user[info[i].uid].userid + "," + info[i].inout + "," + info[i].date + "," + info[i].time + "\n"
 			if k != infolen {
 				m_all[k] = message
@@ -118,51 +255,16 @@ func message() {
 			}
 
 		}
-
+		//fmt.Println(m)
 		mess[dept[j].deptnum] = m
 		write(dept[j].deptnum, m, messkey[dept[j].deptnum])
-		fmt.Println("----------------------------")
-		fmt.Println(m)
-		fmt.Println("----------------------------")
-		// fmt.Println("===", dept[j].deptnum, m, messkey[dept[j].deptnum])
+		writeRunLog("Write Department " + dept[j].deptnum + " success.")
 	}
 	writeAll(m_all)
 	if Update {
+		writeRunLog("Update lastDay Success.")
 		Update = false
 	}
-	/*
-		if Update {
-			for j := 0; j < deptmaplen; j++ {
-				m := make(mesg, infolen)
-				for i := 0; i < infolen; i++ {
-					//fmt.Println(v.uid)
-					fmt.Println(user[info[i].uid].deptment, user[info[i].uid].userid, info[i].inout, info[i].date, info[i].time)
-					message := user[info[i].uid].deptment + "," + user[info[i].uid].userid + "," + info[i].inout + "," + info[i].date + "," + info[i].time + "\n"
-					if k != infolen {
-						m_all[k] = message
-						k++
-
-					}
-
-					if user[info[i].uid].deptment == dept[j].deptnum {
-
-						// fmt.Println("................................")
-						m[messkey[dept[j].deptnum]] = message
-
-						messkey[dept[j].deptnum]++
-					} else {
-						continue
-					}
-					//	write(dept[j].deptnum, m, messkey[dept[j].deptnum])
-
-				}
-
-				mess[dept[j].deptnum] = m
-				write(dept[j].deptnum, m, messkey[dept[j].deptnum])
-				writeAll(m_all)
-			}
-		}
-	*/
 }
 
 func writeAll(mess []string) {
@@ -171,16 +273,16 @@ func writeAll(mess []string) {
 	if err != nil {
 		err := os.Mkdir(dirname, os.ModePerm)
 		if err != nil {
-			fmt.Println("Create Dir " + dirname + " Error!")
+			writeErrorLog("Create Dir " + dirname + " Error!")
 		}
 	}
 	dir.Close()
-	filename := FilePath + "/" + "AllMessage" + "/" + QIANZHUI + ALL_NAME + ".cvs"
+	filename := FilePath + "/" + "AllMessage" + "/" + QIANZHUI + time.Now().String()[0:10] + ALL_NAME + ".csv"
 	file, err := os.Open(filename)
 	if err != nil {
 		file, err := os.Create(filename)
 		if err != nil {
-			fmt.Println("Create File " + filename + " Error!")
+			writeErrorLog("Create File " + filename + " Error!")
 		}
 		file.Close()
 
@@ -188,26 +290,30 @@ func writeAll(mess []string) {
 	file.Close()
 
 	file, err = os.OpenFile(filename, os.O_CREATE, os.ModePerm)
-
+	if err != nil {
+		writeErrorLog(err.Error())
+	}
 	for _, v := range mess {
 		file.WriteString(v)
 	}
+	writeRunLog("WriteAllMessage Success.")
 	defer file.Close()
 }
 
 //从数据库获取数据，并进行相应的处理
 func getData() {
+	fmt.Println("driver={SQL Server};DSN=" + DSN + ";SERVER=" + SERVER + ";Database=" + DATABASE + ";UID=" + USERNAME + ";PWD=" + PASSWORD)
 	conn, err := sql.Open("odbc", "driver={SQL Server};DSN="+DSN+";SERVER="+SERVER+";Database="+DATABASE+";UID="+USERNAME+";PWD="+PASSWORD) //
 
 	if err != nil {
-		fmt.Println("Connecting Error")
+		writeErrorLog("Connecting Error")
 		return
 	}
 	// fmt.Println(conn)
 	defer conn.Close()
 	stmt, err := conn.Prepare("SELECT deptname,badgenumber,userid from USERINFO left join DEPARTMENTS ON USERINFO.DEFAULTDEPTID = DEPARTMENTS.DEPTID")
 	if err != nil {
-		fmt.Println("Query Error", err, stmt)
+		writeErrorLog("Query Error" + err.Error())
 		return
 	}
 	// fmt.Println(stmt)
@@ -215,7 +321,7 @@ func getData() {
 
 	row, err := stmt.Query()
 	if err != nil {
-		fmt.Println("Query Error", err)
+		writeErrorLog("Query Error" + err.Error())
 		return
 	}
 	// fmt.Println(row)
@@ -230,7 +336,6 @@ func getData() {
 		var uid string
 		var dept1 Dept
 		if err := row.Scan(&deptnum, &id, &uid); err == nil {
-			fmt.Println(deptnum, id, uid)
 
 			if deptjud[deptnum] == false {
 				deptjud[deptnum] = true
@@ -248,6 +353,7 @@ func getData() {
 			a.deptment = deptnum
 			user[j] = a
 		}
+		fmt.Println(user)
 	}
 
 	if time.Now().Hour() == UpdateHour && time.Now().Minute() == UpdateMin {
@@ -256,7 +362,7 @@ func getData() {
 	if Update {
 		stmt, err = conn.Prepare("SELECT checktype,checktime,userid from CHECKINOUT where DateDiff(dd,CHECKTIME,getdate())=1")
 		if err != nil {
-			fmt.Println("Query Error", err, stmt)
+			writeErrorLog("Query Error" + err.Error())
 			return
 		}
 		// fmt.Println(stmt)
@@ -264,7 +370,7 @@ func getData() {
 
 		row, err = stmt.Query()
 		if err != nil {
-			fmt.Println("Query Error", err)
+			writeErrorLog("Query Error" + err.Error())
 			return
 		}
 		// fmt.Println(row)
@@ -276,8 +382,6 @@ func getData() {
 			var checktime string
 			var uid string
 			if err := row.Scan(&checktype, &checktime, &uid); err == nil {
-				fmt.Println(checktype, checktime, uid)
-				// fmt.Println("***************...")
 
 				switch checktype {
 				case "I":
@@ -296,6 +400,7 @@ func getData() {
 				info[index] = b
 				index++
 			}
+			//			fmt.Println(info)
 
 		}
 		fmt.Printf("%s\n", "finish")
@@ -304,7 +409,7 @@ func getData() {
 		// stmt, err = conn.Prepare("SELECT checktype,checktime,userid from CHECKINOUT ")
 		stmt, err = conn.Prepare("SELECT checktype,checktime,userid from CHECKINOUT where DateDiff(dd,CHECKTIME,getdate())=0")
 		if err != nil {
-			fmt.Println("Query Error", err, stmt)
+			writeErrorLog("Query Error" + err.Error())
 			return
 		}
 		// fmt.Println(stmt)
@@ -312,7 +417,7 @@ func getData() {
 
 		row, err = stmt.Query()
 		if err != nil {
-			fmt.Println("Query Error", err)
+			writeErrorLog("Query Error" + err.Error())
 			return
 		}
 		// fmt.Println(row)
@@ -324,7 +429,7 @@ func getData() {
 			var checktime string
 			var uid string
 			if err := row.Scan(&checktype, &checktime, &uid); err == nil {
-				fmt.Println(checktype, checktime, uid)
+				//fmt.Println(checktype, checktime, uid)
 				// fmt.Println("***************...")
 
 				switch checktype {
@@ -345,7 +450,7 @@ func getData() {
 				index++
 			}
 		}
-		fmt.Printf("%s\n", "finish====")
+		//fmt.Printf("%s\n", "finish====")
 		return
 	}
 }
@@ -359,17 +464,15 @@ func createPartDir() {
 		if err != nil {
 			err := os.Mkdir(FilePath+"/"+dept[i].deptnum, os.ModePerm)
 			if err != nil {
-				fmt.Println("Mkdir " + FilePath + dept[i].deptnum + " Error")
+				writeErrorLog("Mkdir " + FilePath + dept[i].deptnum + " Error")
 
 			}
-			fmt.Println(dept[i], err)
 		}
 
-		fmt.Println(dept[i], err)
 		dir.Close()
 
 	}
-	fmt.Println(dept[1])
+
 }
 
 //创建文件，函数
@@ -379,7 +482,7 @@ func createFile(path, name string) {
 	if err != nil {
 		_, err = os.Create(filepath)
 		if err != nil {
-			fmt.Println("Create " + filepath + " Error")
+			writeErrorLog("Create " + filepath + " Error")
 		}
 	}
 	defer file.Close()
@@ -390,7 +493,7 @@ func write(deptment string, message []string, lenth int) {
 	var filename string
 	if Update {
 		filename = QIANZHUI + info[0].date + ".csv"
-		fmt.Println(filename)
+
 	} else {
 		filename = QIANZHUI + time.Now().String()[0:4] + time.Now().String()[5:7] + time.Now().String()[8:10] + ".csv"
 	}
@@ -411,12 +514,30 @@ func write(deptment string, message []string, lenth int) {
 	fmt.Println(lenth)
 	for i := 0; i < lenth; i++ {
 		file.WriteString(message[i])
-		fmt.Println(message[i])
+		//	fmt.Println(message[i])
 	}
 
 	file.Close()
 }
 
-func UpdateFile() {
+func writeErrorLog(logMessage string) {
+	logfile := "log/error/" + "log_" + time.Now().String()[0:10] + ".log"
+	file, err := os.OpenFile(logfile, os.O_APPEND|os.O_CREATE, os.ModePerm)
+	if err != nil {
+		fmt.Println("Create Log File Error" + time.Now().String())
+		return
+	}
+	file.WriteString(time.Now().String() + " " + logMessage + "\n")
+	defer file.Close()
+}
 
+func writeRunLog(logMessage string) {
+	logfile := "log/run/" + "log_" + time.Now().String()[0:10] + ".log"
+	file, err := os.OpenFile(logfile, os.O_APPEND|os.O_CREATE, os.ModePerm)
+	if err != nil {
+		fmt.Println("Create Log File Error" + time.Now().String())
+		return
+	}
+	file.WriteString(time.Now().String() + " " + logMessage + "\n")
+	defer file.Close()
 }

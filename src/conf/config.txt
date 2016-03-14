@@ -1,0 +1,11 @@
+DSN=renwu
+//test
+SERVER=222.24.24.91
+USERNAME=Admin
+PASSWORD=
+FilePath=C:/QianDao
+DATABASE=renwu2
+QIANZHUI=rmsTA_
+ALL_NAME=AllMessge
+UpdateHour=12
+UpdateMin=59
