@@ -280,7 +280,13 @@ func writeAll(mess []string) {
 		}
 	}
 	dir.Close()
-	filename := FilePath + "/" + "AllMessage" + "/" + QIANZHUI + time.Now().String()[0:10] + ALL_NAME + ".csv"
+	/*
+		if Update {
+			filename := FilePath + "/" + "AllMessage" + "/" + QIANZHUI + info[0].date + ALL_NAME + ".csv"
+		}
+	*/
+	filename := FilePath + "/" + "AllMessage" + "/" + QIANZHUI + info[0].date + ALL_NAME + ".csv"
+
 	file, err := os.Open(filename)
 	if err != nil {
 		file, err := os.Create(filename)
@@ -340,16 +346,19 @@ func getData() {
 
 	for row.Next() {
 		var deptnum string
-		var useridint int
-		var id int
+		var useridstr string
+		var idstr string
 		var dept1 Dept
-		if err := row.Scan(&deptnum, &useridint, &id); err == nil {
-			userid := strconv.Itoa(useridint)
-
+		if err := row.Scan(&deptnum, &useridstr, &idstr); err == nil {
+			// userid := strconv.Itoa(useridint)
+			// userid, _ := strconv.ParseInt(useridstr, 10, 32)
+			//	fmt.Println(useridstr)
+			//idstr := strconv.Itoa(idint)
+			id, _ := strconv.ParseInt(idstr, 10, 32)
 			if localDebug {
-				fmt.Println(deptnum, useridint, id)
+				fmt.Println(deptnum, useridstr, id)
 			}
-			fmt.Println(deptnum, userid, id)
+			//			fmt.Println(deptnum, userid, id)
 
 			if deptjud[deptnum] == false {
 				deptjud[deptnum] = true
@@ -363,7 +372,7 @@ func getData() {
 				fmt.Println(dept1)
 			}
 
-			fmt.Println("--------------------")
+			//			fmt.Println("--------------------")
 			/*
 				i, _ := strconv.ParseInt(id, 10, 32)
 				j := int(i)
@@ -371,10 +380,10 @@ func getData() {
 				l, _ := strconv.ParseInt(id, 10, 32)
 				k := int(id)
 			*/
-			j := id
+			j := int(id)
 			var a User
-			a.id = j
-			a.userid = userid
+			a.id = int(id)
+			a.userid = useridstr
 			a.deptment = deptnum
 			user[j] = a
 
@@ -432,9 +441,9 @@ func getData() {
 				/*
 					i, _ := strconv.ParseInt(uid, 10, 64)
 				*/
-				j := uid
+				// j := uid
 				var b Info
-				b.uid = j
+				b.uid = int(uid)
 				b.inout = checktype
 				b.date = checktime[0:4] + checktime[5:7] + checktime[8:10]
 				b.time = checktime[11:13] + checktime[14:16]
@@ -488,9 +497,9 @@ func getData() {
 				/*
 				 i, _ := strconv.ParseInt(uid, 10, 64)
 				*/
-				j := uid
+				// j := uid
 				var b Info
-				b.uid = j
+				b.uid = int(uid)
 				b.inout = checktype
 				b.date = checktime[0:4] + checktime[5:7] + checktime[8:10]
 				b.time = checktime[11:13] + checktime[14:16]

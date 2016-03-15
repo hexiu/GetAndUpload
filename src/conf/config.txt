@@ -8,4 +8,4 @@ DATABASE=renwu2
 QIANZHUI=rmsTA_
 ALL_NAME=AllMessge
 UpdateHour=09
-UpdateMin=01
+UpdateMin=48
