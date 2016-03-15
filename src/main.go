@@ -13,8 +13,8 @@ import (
 
 //获取的用户信息
 type User struct {
-	uid      int
-	userid   int
+	id       int
+	userid   string
 	deptment string
 }
 
@@ -50,7 +50,7 @@ var Conf map[string]string = make(map[string]string)
 //更新标识
 var Update bool
 
-//var localDebug bool = true
+var localDebug bool = false
 
 // 配置信息全局变量（有默认值）
 var (
@@ -186,6 +186,8 @@ func readConfDir() {
 	lineCounter := 0
 	for {
 		inputString, readerError := inputReader.ReadString('\n')
+
+		// fmt.Println(inputString)
 		lenStr := len(inputString)
 		for i, v := range inputString {
 			if inputString[0:2] == "//" {
@@ -195,12 +197,15 @@ func readConfDir() {
 				Conf[inputString[:i]] = inputString[i+1 : lenStr-2]
 			}
 		}
+		//	fmt.Println(Conf)
+
 		if readerError == io.EOF {
-			//fmt.Println(Conf)
 			return
 		}
-
 		lineCounter++
+	}
+	if localDebug {
+		fmt.Println(Conf)
 	}
 
 }
@@ -231,7 +236,8 @@ func message() {
 	for j := 0; j < deptmaplen; j++ {
 		m := make(mesg, infolen)
 		for i := 0; i < infolen; i++ {
-			message := user[info[i].uid].deptment + "," + strconv.Itoa(user[info[i].uid].userid) + "," + info[i].inout + "," + info[i].date + "," + info[i].time + "\n"
+			// message := user[info[i].uid].deptment + "," + strconv.Itoa(user[info[i].uid].userid) + "," + info[i].inout + "," + info[i].date + "," + info[i].time + "\n"
+			message := user[info[i].uid].deptment + "," + user[info[i].uid].userid + "," + info[i].inout + "," + info[i].date + "," + info[i].time + "\n"
 			if k != infolen {
 				m_all[k] = message
 				k++
@@ -301,7 +307,9 @@ func writeAll(mess []string) {
 
 //从数据库获取数据，并进行相应的处理
 func getData() {
-	fmt.Println("driver={SQL Server};DSN=" + DSN + ";SERVER=" + SERVER + ";Database=" + DATABASE + ";UID=" + USERNAME + ";PWD=" + PASSWORD)
+	if localDebug {
+		fmt.Println("driver={SQL Server};DSN=" + DSN + ";SERVER=" + SERVER + ";Database=" + DATABASE + ";UID=" + USERNAME + ";PWD=" + PASSWORD)
+	}
 	conn, err := sql.Open("odbc", "driver={SQL Server};DSN="+DSN+";SERVER="+SERVER+";Database="+DATABASE+";UID="+USERNAME+";PWD="+PASSWORD) //
 
 	if err != nil {
@@ -310,6 +318,7 @@ func getData() {
 	}
 	// fmt.Println(conn)
 	defer conn.Close()
+
 	stmt, err := conn.Prepare("SELECT deptname,badgenumber,userid from USERINFO left join DEPARTMENTS ON USERINFO.DEFAULTDEPTID = DEPARTMENTS.DEPTID")
 	if err != nil {
 		writeErrorLog("Query Error" + err.Error())
@@ -331,10 +340,16 @@ func getData() {
 
 	for row.Next() {
 		var deptnum string
+		var useridint int
 		var id int
-		var uid string
 		var dept1 Dept
-		if err := row.Scan(&deptnum, &id, &uid); err == nil {
+		if err := row.Scan(&deptnum, &useridint, &id); err == nil {
+			userid := strconv.Itoa(useridint)
+
+			if localDebug {
+				fmt.Println(deptnum, useridint, id)
+			}
+			fmt.Println(deptnum, userid, id)
 
 			if deptjud[deptnum] == false {
 				deptjud[deptnum] = true
@@ -343,31 +358,39 @@ func getData() {
 				dept[flag] = dept1
 				flag++
 			}
+
+			if localDebug == true {
+				fmt.Println(dept1)
+			}
+
+			fmt.Println("--------------------")
 			/*
-				if localDebug == true {
-					fmt.Println(dept1)
-				}
+				i, _ := strconv.ParseInt(id, 10, 32)
+				j := int(i)
+			*/ /*
+				l, _ := strconv.ParseInt(id, 10, 32)
+				k := int(id)
 			*/
-			// fmt.Println("--------------------")
-			i, _ := strconv.ParseInt(uid, 10, 32)
-			j := int(i)
-			//			k := int(id)
+			j := id
 			var a User
-			a.uid = j
-			a.userid = id
+			a.id = j
+			a.userid = userid
 			a.deptment = deptnum
 			user[j] = a
-			//			fmt.Println(a)
-		}
-		/*
-			if localDebug == true {
-				fmt.Println(user)
-			}
-		*/
 
-		fmt.Println(user)
+			if localDebug == true {
+				fmt.Println(a)
+			}
+		}
+
+		if localDebug == true {
+			fmt.Println(user)
+		}
+
+		//	fmt.Println(user)
 
 	}
+	//	fmt.Println(user)
 
 	if time.Now().Hour() == UpdateHour && time.Now().Minute() == UpdateMin {
 		Update = true
@@ -393,22 +416,23 @@ func getData() {
 		for row.Next() {
 			var checktype string
 			var checktime string
-			var uid string
+			var uid int
 			if err := row.Scan(&checktype, &checktime, &uid); err == nil {
-				/*
-					if localDebug == true {
-						fmt.Println(checktype, checktime, uid)
-					}
-				*/
+
+				if localDebug == true {
+					fmt.Println(checktype, checktime, uid)
+				}
+
 				switch checktype {
 				case "I":
 				case "O":
 				default:
 					continue
 				}
-
-				i, _ := strconv.ParseInt(uid, 10, 64)
-				j := int(i)
+				/*
+					i, _ := strconv.ParseInt(uid, 10, 64)
+				*/
+				j := uid
 				var b Info
 				b.uid = j
 				b.inout = checktype
@@ -419,12 +443,12 @@ func getData() {
 			}
 
 		}
-		/*
-			if localDebug == true {
-				fmt.Println(info)
-			}
-		*/
-		fmt.Printf("%s\n", "finish")
+
+		if localDebug == true {
+			fmt.Println(info)
+		}
+
+		//fmt.Printf("%s\n", "finish")
 
 		return
 	} else {
@@ -449,10 +473,11 @@ func getData() {
 		for row.Next() {
 			var checktype string
 			var checktime string
-			var uid string
+			var uid int
 			if err := row.Scan(&checktype, &checktime, &uid); err == nil {
-				//fmt.Println(checktype, checktime, uid)
-				// fmt.Println("***************...")
+				if localDebug == true {
+					fmt.Println(checktype, checktime, uid)
+				}
 
 				switch checktype {
 				case "I":
@@ -460,9 +485,10 @@ func getData() {
 				default:
 					continue
 				}
-
-				i, _ := strconv.ParseInt(uid, 10, 64)
-				j := int(i)
+				/*
+				 i, _ := strconv.ParseInt(uid, 10, 64)
+				*/
+				j := uid
 				var b Info
 				b.uid = j
 				b.inout = checktype
@@ -473,11 +499,11 @@ func getData() {
 			}
 		}
 		//	fmt.Println(info)
-		/*
-			if localDebug == true {
-				fmt.Println(info)
-			}
-		*/
+
+		if localDebug == true {
+			fmt.Println(info)
+		}
+
 		//fmt.Printf("%s\n", "finish====")
 		return
 	}
@@ -539,7 +565,8 @@ func write(deptment string, message []string, lenth int) {
 	}
 
 	file, err = os.OpenFile(filepath, os.O_WRONLY, os.ModePerm)
-	fmt.Println(lenth)
+
+	//fmt.Println(lenth)
 	for i := 0; i < lenth; i++ {
 		file.WriteString(message[i])
 		//	fmt.Println(message[i])

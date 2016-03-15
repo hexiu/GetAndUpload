@@ -7,5 +7,5 @@ FilePath=C:/QianDao
 DATABASE=renwu2
 QIANZHUI=rmsTA_
 ALL_NAME=AllMessge
-UpdateHour=12
-UpdateMin=59
+UpdateHour=09
+UpdateMin=01
