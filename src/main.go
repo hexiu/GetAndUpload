@@ -13,24 +13,24 @@ import (
 
 //获取的用户信息
 type User struct {
-	id       int
+	id       string
 	userid   string
 	deptment string
 }
 
 //用户组成的一个查询字典
-var user map[int]User = make(map[int]User, 0)
+var user map[string]User = make(map[string]User, 0)
 
 //获取签到信息
 type Info struct {
-	uid   int
+	uid   string
 	inout string
 	date  string
 	time  string
 }
 
 //签到信息记录的字典
-var info map[int]Info = make(map[int]Info, 0)
+var info map[string]Info = make(map[string]Info, 0)
 
 //获取部门信息
 type Dept struct {
@@ -50,7 +50,7 @@ var Conf map[string]string = make(map[string]string)
 //更新标识
 var Update bool
 
-var localDebug bool = false
+var localDebug bool = true
 
 // 配置信息全局变量（有默认值）
 var (
@@ -235,8 +235,11 @@ func message() {
 	k := 0
 	for j := 0; j < deptmaplen; j++ {
 		m := make(mesg, infolen)
-		for i := 0; i < infolen; i++ {
+		for q := 0; q < infolen; q++ {
 			// message := user[info[i].uid].deptment + "," + strconv.Itoa(user[info[i].uid].userid) + "," + info[i].inout + "," + info[i].date + "," + info[i].time + "\n"
+			i := strconv.Itoa(q)
+
+			//			message := user[info[i].uid].deptment + "," + user[info[i].uid].userid + "," + info[i].inout + "," + info[i].date + "," + info[i].time + "\n"
 			message := user[info[i].uid].deptment + "," + user[info[i].uid].userid + "," + info[i].inout + "," + info[i].date + "," + info[i].time + "\n"
 			if k != infolen {
 				m_all[k] = message
@@ -285,7 +288,7 @@ func writeAll(mess []string) {
 			filename := FilePath + "/" + "AllMessage" + "/" + QIANZHUI + info[0].date + ALL_NAME + ".csv"
 		}
 	*/
-	filename := FilePath + "/" + "AllMessage" + "/" + QIANZHUI + info[0].date + ALL_NAME + ".csv"
+	filename := FilePath + "/" + "AllMessage" + "/" + QIANZHUI + info["0"].date + ALL_NAME + ".csv"
 
 	file, err := os.Open(filename)
 	if err != nil {
@@ -354,9 +357,9 @@ func getData() {
 			// userid, _ := strconv.ParseInt(useridstr, 10, 32)
 			//	fmt.Println(useridstr)
 			//idstr := strconv.Itoa(idint)
-			id, _ := strconv.ParseInt(idstr, 10, 32)
+			//		id, _ := strconv.ParseInt(idstr, 10, 32)
 			if localDebug {
-				fmt.Println(deptnum, useridstr, id)
+				fmt.Println(deptnum, useridstr, idstr)
 			}
 			//			fmt.Println(deptnum, userid, id)
 
@@ -380,12 +383,15 @@ func getData() {
 				l, _ := strconv.ParseInt(id, 10, 32)
 				k := int(id)
 			*/
-			j := int(id)
+			//		j := int(id)
 			var a User
-			a.id = int(id)
+			//		a.id = int(id)
+			// a.id = int(id)
+			a.id = idstr
 			a.userid = useridstr
 			a.deptment = deptnum
-			user[j] = a
+			//			q := strconv.Itoa(i)
+			user[idstr] = a
 
 			if localDebug == true {
 				fmt.Println(a)
@@ -425,7 +431,7 @@ func getData() {
 		for row.Next() {
 			var checktype string
 			var checktime string
-			var uid int
+			var uid string
 			if err := row.Scan(&checktype, &checktime, &uid); err == nil {
 
 				if localDebug == true {
@@ -443,11 +449,13 @@ func getData() {
 				*/
 				// j := uid
 				var b Info
-				b.uid = int(uid)
+				//				b.uid = int(uid)
+				b.uid = uid
 				b.inout = checktype
 				b.date = checktime[0:4] + checktime[5:7] + checktime[8:10]
 				b.time = checktime[11:13] + checktime[14:16]
-				info[index] = b
+				indexstr := strconv.Itoa(index)
+				info[indexstr] = b
 				index++
 			}
 
@@ -482,7 +490,7 @@ func getData() {
 		for row.Next() {
 			var checktype string
 			var checktime string
-			var uid int
+			var uid string
 			if err := row.Scan(&checktype, &checktime, &uid); err == nil {
 				if localDebug == true {
 					fmt.Println(checktype, checktime, uid)
@@ -499,11 +507,13 @@ func getData() {
 				*/
 				// j := uid
 				var b Info
-				b.uid = int(uid)
+				// b.uid = int(uid)
+				b.uid = uid
 				b.inout = checktype
 				b.date = checktime[0:4] + checktime[5:7] + checktime[8:10]
 				b.time = checktime[11:13] + checktime[14:16]
-				info[index] = b
+				indexstr := strconv.Itoa(index)
+				info[indexstr] = b
 				index++
 			}
 		}
@@ -555,7 +565,7 @@ func createFile(path, name string) {
 func write(deptment string, message []string, lenth int) {
 	var filename string
 	if Update {
-		filename = QIANZHUI + info[0].date + ".csv"
+		filename = QIANZHUI + info["0"].date + ".csv"
 
 	} else {
 		filename = QIANZHUI + time.Now().String()[0:4] + time.Now().String()[5:7] + time.Now().String()[8:10] + ".csv"
@@ -563,17 +573,21 @@ func write(deptment string, message []string, lenth int) {
 
 	filepath := FilePath + "/" + deptment + "/" + filename
 
-	file, err := os.Open(filepath)
+	/*
+		file, err := os.Open(filepath)
 
+		if err != nil {
+			file, _ = os.Create(filepath)
+			file.Close()
+		} else {
+			file.Close()
+		}
+	*/
+	file, err := os.OpenFile(filepath, os.O_WRONLY|os.O_CREATE, os.ModePerm)
 	if err != nil {
-		file, _ = os.Create(filepath)
-		file.WriteString("deptnum" + "," + "userid" + "," + "in/out" + "," + "date" + "," + "time" + "\n")
-		file.Close()
-	} else {
-		file.Close()
+		writeErrorLog("Create File " + filepath + " Error !")
 	}
-
-	file, err = os.OpenFile(filepath, os.O_WRONLY, os.ModePerm)
+	file.WriteString("deptnum" + "," + "userid" + "," + "in/out" + "," + "date" + "," + "time" + "\n")
 
 	//fmt.Println(lenth)
 	for i := 0; i < lenth; i++ {
@@ -581,7 +595,7 @@ func write(deptment string, message []string, lenth int) {
 		//	fmt.Println(message[i])
 	}
 
-	file.Close()
+	defer file.Close()
 }
 
 //错误日志记录函数
