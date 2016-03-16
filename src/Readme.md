@@ -27,28 +27,28 @@ ceair.exe
 *注：配置文件的等号左右不可以有空格！*
 
 ** 配置详解：**
-//Windows DSN接口，默认未使用,可改
-DSN=ceair
-//SQLServer服务器地址
-SERVER=127.0.0.1
-//数据库名称
-DATABASE=CEAIR
-//SQLServer 用户名
-USERNAME=******
-//SQLServer 密码
-PASSWORD=*******@!
-//数据文件存放路径
-FilePath=C:/DFS
-//存放文件的前缀
-QIANZHUI=rmsTA_
-//当天所有数据的文件名标识
-ALL_NAME=AllMessge
-//每天更新时间（小时）
-UpdateHour=00
-//每天更新时间（分钟）
-UpdateMin=01
-//程序调试模式开关
-localDebug=false
-//程序运行日志记录开关
-rtRunLog=false
+- //Windows DSN接口，默认未使用,可改
+- DSN=ceair
+- //SQLServer服务器地址
+- SERVER=127.0.0.1
+- //数据库名称
+- DATABASE=CEAIR
+- //SQLServer 用户名
+- USERNAME=******
+- //SQLServer 密码
+- PASSWORD=*******@!
+- //数据文件存放路径
+- FilePath=C:/DFS
+- //存放文件的前缀
+- QIANZHUI=rmsTA_
+- //当天所有数据的文件名标识
+- ALL_NAME=AllMessge
+- //每天更新时间（小时）
+- UpdateHour=00
+- //每天更新时间（分钟）
+- UpdateMin=01
+- //程序调试模式开关
+- localDebug=false
+- //程序运行日志记录开关
+- rtRunLog=false
 
