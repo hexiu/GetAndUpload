@@ -51,12 +51,10 @@ var Conf map[string]string = make(map[string]string)
 //更新标识
 var Update bool
 
-var localDebug bool = true
-
 // 配置信息全局变量（有默认值）
 var (
 	DSN        string = "renwu"
-	SERVER     string = "222.24.24.91"
+	SERVER     string = "127.0.0.1"
 	USERNAME   string = "Admin"
 	PASSWORD   string = ""
 	FilePath   string = "C:/QianDao"
@@ -65,6 +63,8 @@ var (
 	ALL_NAME   string = "AllMessge"
 	UpdateHour int    = 00
 	UpdateMin  int    = 01
+	localDebug bool   = false
+	rtRubLog   bool   = false
 )
 
 // 主函数
@@ -261,10 +261,13 @@ func message() {
 		//fmt.Println(m)
 		mess[dept[j].deptnum] = m
 		write(dept[j].deptnum, m, messkey[dept[j].deptnum])
-		writeRunLog("Write Department " + dept[j].deptnum + " success.")
+		if rtRubLog {
+			writeRunLog("Write Department " + dept[j].deptnum + " success.")
+		}
 	}
-	//	writeRunLog("Write Department  success.")
-
+	if rtRubLog {
+		writeRunLog("Write Department  success.")
+	}
 	writeAll(m_all)
 	if Update {
 		writeRunLog("Update lastDay Success.")
@@ -310,7 +313,9 @@ func writeAll(mess []string) {
 	for _, v := range mess {
 		file.WriteString(v)
 	}
-	writeRunLog("Write Day AllMessage Success.")
+	if rtRubLog {
+		writeRunLog("Write Day AllMessage Success.")
+	}
 	defer file.Close()
 }
 
