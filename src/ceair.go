@@ -54,30 +54,29 @@ var Update bool
 // 配置信息全局变量（有默认值）
 var (
 	DSN        string = "renwu"
-	SERVER     string = "127.0.0.1"
-	USERNAME   string = "Admin"
-	PASSWORD   string = ""
+	SERVER     string = "222.24.24.178"
+	USERNAME   string = "sa"
+	PASSWORD   string = "Xiyounet@!"
 	FilePath   string = "C:/QianDao"
-	DATABASE   string = "renwu2"
+	DATABASE   string = "CEAIR"
 	QIANZHUI   string = "rmsTA_"
 	ALL_NAME   string = "AllMessge"
 	UpdateHour int    = 00
 	UpdateMin  int    = 01
 	localDebug bool   = false
-	rtRubLog   bool   = false
+	rtRunLog   bool   = false
 )
 
 // 主函数
 func main() {
 	//localDebug = false
-
-	// 创建签到数据存放主目录
-	createHomeDir()
 	// 创建配置文件目录
 	readConfDir()
 	// 加载配置文件
 	initConf()
-	// fmt.Println(Conf)
+
+	// 创建签到数据存放主目录
+	createHomeDir()
 
 	//获取数据
 	getData()
@@ -88,7 +87,6 @@ func main() {
 	// 数据处理引擎，并且写入文档
 	message()
 
-	time.Sleep(100 * time.Second)
 }
 
 // 加载配置文件函数
@@ -116,6 +114,27 @@ func initConf() {
 	if Conf["ALL_NAME"] != "" {
 		ALL_NAME = Conf["ALL_NAME"]
 	}
+	if Conf["FilePath"] != "" {
+		FilePath = Conf["FilePath"]
+	}
+	if Conf["rtRunLog"] != "" {
+		jud := "true"
+		if jud == Conf["rtRunLog"] {
+			rtRunLog = true
+		} else {
+			rtRunLog = false
+		}
+
+	}
+	if Conf["localDebug"] != "" {
+		jud := "true"
+		if jud == Conf["localDebug"] {
+			localDebug = true
+		} else {
+			localDebug = false
+		}
+	}
+
 	Hour, err := strconv.ParseInt(Conf["UpdateHour"], 10, 32)
 	if err != nil {
 		writeErrorLog(err.Error())
@@ -164,13 +183,12 @@ func readConfDir() {
 	dirName := "conf"
 	dir, err := os.Open(dirName)
 	if err != nil {
-		/*
-			err := os.Mkdir(dirName, os.ModePerm)
-			if err != nil {
-				writeErrorLog(err.Error() + "  Create Conf Dir " + FilePath + " Error")
-			}
-		*/
-		return
+
+		err := os.Mkdir(dirName, os.ModePerm)
+		if err != nil {
+			writeErrorLog(err.Error() + "  Create Conf Dir " + FilePath + " Error")
+		}
+
 	}
 	defer dir.Close()
 
@@ -178,7 +196,6 @@ func readConfDir() {
 	file, err := os.Open(fileName)
 	if err != nil {
 		writeErrorLog("No Config File.")
-		return
 	}
 	defer file.Close()
 
@@ -261,11 +278,11 @@ func message() {
 		//fmt.Println(m)
 		mess[dept[j].deptnum] = m
 		write(dept[j].deptnum, m, messkey[dept[j].deptnum])
-		if rtRubLog {
+		if rtRunLog {
 			writeRunLog("Write Department " + dept[j].deptnum + " success.")
 		}
 	}
-	if rtRubLog {
+	if rtRunLog {
 		writeRunLog("Write Department  success.")
 	}
 	writeAll(m_all)
@@ -313,7 +330,7 @@ func writeAll(mess []string) {
 	for _, v := range mess {
 		file.WriteString(v)
 	}
-	if rtRubLog {
+	if rtRunLog {
 		writeRunLog("Write Day AllMessage Success.")
 	}
 	defer file.Close()
