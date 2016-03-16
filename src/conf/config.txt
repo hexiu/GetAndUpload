@@ -1,13 +1,13 @@
 ﻿//Windows DSN接口，默认未使用,可改
 DSN=ceair
 //SQLServer服务器地址
-SERVER=222.24.24.178
+SERVER=127.0.0.1
 //数据库名称
 DATABASE=CEAIR
 //SQLServer 用户名
-USERNAME=sa
+USERNAME=******
 //SQLServer 密码
-PASSWORD=Xiyounet@!
+PASSWORD=*******@!
 //数据文件存放路径
 FilePath=C:/DFS
 //存放文件的前缀
@@ -19,6 +19,6 @@ UpdateHour=00
 //每天更新时间（分钟）
 UpdateMin=01
 //程序调试模式开关
-localDebug=true
+localDebug=false
 //程序运行日志记录开关
 rtRunLog=false
