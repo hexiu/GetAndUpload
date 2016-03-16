@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	// "code.google.com/p/mahonia"
 	"database/sql"
 	"fmt"
 	_ "go-odbc/driver"
@@ -77,21 +78,17 @@ func main() {
 	// 加载配置文件
 	initConf()
 	// fmt.Println(Conf)
-	for true {
 
-		//获取数据
-		getData()
+	//获取数据
+	getData()
 
-		//创建各部门的目录
-		createPartDir()
+	//创建各部门的目录
+	createPartDir()
 
-		// 数据处理引擎，并且写入文档
-		message()
+	// 数据处理引擎，并且写入文档
+	message()
 
-		// 程序休眠时间
-		time.Sleep(60 * time.Second)
-
-	}
+	time.Sleep(100 * time.Second)
 }
 
 // 加载配置文件函数
@@ -167,17 +164,20 @@ func readConfDir() {
 	dirName := "conf"
 	dir, err := os.Open(dirName)
 	if err != nil {
-		err := os.Mkdir(dirName, os.ModePerm)
-		if err != nil {
-			writeErrorLog(err.Error() + "  Create Conf Dir " + FilePath + " Error")
-		}
+		/*
+			err := os.Mkdir(dirName, os.ModePerm)
+			if err != nil {
+				writeErrorLog(err.Error() + "  Create Conf Dir " + FilePath + " Error")
+			}
+		*/
+		return
 	}
-	dir.Close()
+	defer dir.Close()
 
 	fileName := dirName + "/" + "config.txt"
 	file, err := os.Open(fileName)
 	if err != nil {
-		writeErrorLog(err.Error())
+		writeErrorLog("No Config File.")
 		return
 	}
 	defer file.Close()
@@ -316,6 +316,11 @@ func writeAll(mess []string) {
 
 //从数据库获取数据，并进行相应的处理
 func getData() {
+
+	//转码
+	// var dec mahonia.Decoder
+	// var enc mahonia.Encoder
+
 	if localDebug {
 		fmt.Println("driver={SQL Server};DSN=" + DSN + ";SERVER=" + SERVER + ";Database=" + DATABASE + ";UID=" + USERNAME + ";PWD=" + PASSWORD)
 	}
@@ -353,6 +358,18 @@ func getData() {
 		var idstr string
 		var dept1 Dept
 		if err := row.Scan(&deptnum, &useridstr, &idstr); err == nil {
+			/*
+				dec = mahonia.NewDecoder("gbk")
+				if ret, ok := dec.ConvertStringOK(useridstr); ok {
+
+					fmt.Println("GBK to UTF-8: ", ret, " bytes:", useridstr)
+
+				}
+			*/ // fmt.Println(idint)
+			//  idstr := strconv.Itoa(idint)
+
+			// test, _ := strconv.ParseInt(useridstr, 10, 32)
+			// fmt.Println("UserId======", test)
 			// userid := strconv.Itoa(useridint)
 			// userid, _ := strconv.ParseInt(useridstr, 10, 32)
 			//	fmt.Println(useridstr)

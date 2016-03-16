@@ -35,3 +35,9 @@
 2016-03-15 09:48:46.5986039 +0800 CST open C:/QianDao: The system cannot find the file specified.
 2016-03-15 09:53:50.4239817 +0800 CST open C:/QianDao: The system cannot find the file specified.
 2016-03-15 12:58:06.7913698 +0800 CST open C:/QianDao: The system cannot find the file specified.
+2016-03-15 22:30:16.6775324 +0800 CST Query Error28000 [Microsoft][ODBC SQL Server Driver][SQL Server]用户 'Admin' 登录失败。
+2016-03-15 22:32:12.149137 +0800 CST Query Error42000 [Microsoft][ODBC SQL Server Driver][SQL Server]无法打开登录所请求的数据库 "renwu2"。登录失败。
+2016-03-15 22:33:05.6551974 +0800 CST Query Error42000 [Microsoft][ODBC SQL Server Driver][SQL Server]无法打开登录所请求的数据库 "renwu2"。登录失败。
+2016-03-15 22:35:36.2138089 +0800 CST Query Error42000 [Microsoft][ODBC SQL Server Driver][SQL Server]无法打开登录所请求的数据库 "renwu2"。登录失败。
+2016-03-15 22:36:35.5952053 +0800 CST Query Error42000 [Microsoft][ODBC SQL Server Driver][SQL Server]无法打开登录所请求的数据库 "renwu2"。登录失败。
+2016-03-15 22:39:19.9086035 +0800 CST Query Error42000 [Microsoft][ODBC SQL Server Driver][SQL Server]无法打开登录所请求的数据库 "renwu2"。登录失败。

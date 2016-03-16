@@ -1,11 +1,11 @@
 DSN=renwu
 //test
-SERVER=222.24.24.91
-USERNAME=Admin
-PASSWORD=
+SERVER=222.24.24.178
+USERNAME=sa
+PASSWORD=Xiyounet@!
 FilePath=C:/QianDao
-DATABASE=renwu2
+DATABASE=WesternAir
 QIANZHUI=rmsTA_
 ALL_NAME=AllMessge
-UpdateHour=12
-UpdateMin=59
+UpdateHour=17
+UpdateMin=20
