@@ -1,24 +1,24 @@
 ﻿//Windows DSN接口，默认未使用,可改
 DSN=ceair
 //SQLServer服务器地址
-SERVER=127.0.0.1
+SERVER=192.168.230.139
 //数据库名称
 DATABASE=CEAIR
 //SQLServer 用户名
-USERNAME=******
+USERNAME=sa
 //SQLServer 密码
-PASSWORD=*******@!
+PASSWORD=123456
 //数据文件存放路径
 FilePath=C:/DFS
+//数据文件更新存放路径
+FilePathBak=Z:
 //存放文件的前缀
 QIANZHUI=rmsTA_
 //当天所有数据的文件名标识
 ALL_NAME=AllMessge
-//每天更新时间（小时）
-UpdateHour=00
-//每天更新时间（分钟）
-UpdateMin=01
 //程序调试模式开关
-localDebug=false
+localDebug=true
 //程序运行日志记录开关
 rtRunLog=false
+//更新时间段
+UpdateTime=2

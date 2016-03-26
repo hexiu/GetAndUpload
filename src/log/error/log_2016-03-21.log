@@ -1,0 +1,11 @@
+2016-03-21 13:11:50.7106097 +0800 CST Query Error08001 [Microsoft][ODBC SQL Server Driver][DBNETLIB]SQL Server 不存在或访问被拒绝[Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()).
+2016-03-21 13:14:06.9633281 +0800 CST Query Error08001 [Microsoft][ODBC SQL Server Driver][DBNETLIB]SQL Server 不存在或访问被拒绝[Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()).
+2016-03-21 13:15:44.4009012 +0800 CST Query Error08001 [Microsoft][ODBC SQL Server Driver][DBNETLIB]SQL Server 不存在或访问被拒绝[Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()).
+2016-03-21 13:16:13.5475683 +0800 CST Query Error08001 [Microsoft][ODBC SQL Server Driver][DBNETLIB]SQL Server 不存在或访问被拒绝[Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()).
+2016-03-21 13:17:23.1295481 +0800 CST Query Error08001 [Microsoft][ODBC SQL Server Driver][DBNETLIB]SQL Server 不存在或访问被拒绝[Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()).
+2016-03-21 13:41:44.439957 +0800 CST Query Error08001 [Microsoft][ODBC SQL Server Driver][DBNETLIB]SQL Server 不存在或访问被拒绝[Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()).
+2016-03-21 14:01:36.2183288 +0800 CST Query Error08001 [Microsoft][ODBC SQL Server Driver][DBNETLIB]SQL Server 不存在或访问被拒绝[Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()).
+2016-03-21 14:04:15.1604197 +0800 CST Query Error08001 [Microsoft][ODBC SQL Server Driver][DBNETLIB]SQL Server 不存在或访问被拒绝[Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()).
+2016-03-21 14:07:53.8472821 +0800 CST Query Error08001 [Microsoft][ODBC SQL Server Driver][DBNETLIB]SQL Server 不存在或访问被拒绝[Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()).
+2016-03-21 14:27:34.6129281 +0800 CST Query Error42000 [Microsoft][ODBC SQL Server Driver][SQL Server]'nn' 不是可以识别的 datediff 选项。[Microsoft][ODBC SQL Server Driver][SQL Server]无法预定义语句。
+2016-03-21 14:34:31.1275502 +0800 CST Query Error42000 [Microsoft][ODBC SQL Server Driver][SQL Server]'dn' 不是可以识别的 datediff 选项。[Microsoft][ODBC SQL Server Driver][SQL Server]无法预定义语句。
