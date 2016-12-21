@@ -28,6 +28,8 @@ type Info struct {
 	inout string
 	date  string
 	time  string
+	badgenumber string 
+	deptname string
 }
 
 //签到信息记录的字典
@@ -64,7 +66,7 @@ var (
 	ALL_NAME    string = "AllMessge"
 	// UpdateHour  int    = 00
 	// UpdateMin   int    = 01
-	UpdateTime string = "10000"
+	UpdateTime string = "20000"
 	localDebug bool   = false
 	rtRunLog   bool   = false
 )
@@ -83,11 +85,8 @@ func main() {
 	//获取数据
 	getData()
 
-	//创建各部门的目录
-	createPartDir()
-
 	// 数据处理引擎，并且写入文档
-	//message()
+		// message()
 
 }
 
@@ -291,7 +290,7 @@ func message() {
 	if rtRunLog {
 		writeRunLog("Write Department  success.")
 	}
-	// writeAll(m_all)
+	//writeAll(m_all)
 }
 
 //将当天所有部门的信息写入汇总文件
@@ -351,7 +350,7 @@ func getData() {
 	// fmt.Println(conn)
 	defer conn.Close()
 
-	stmt, err := conn.Prepare("SELECT deptname,badgenumber,userid from USERINFO left join DEPARTMENTS ON USERINFO.DEFAULTDEPTID = DEPARTMENTS.DEPTID")
+	stmt, err := conn.Prepare("SELECT deptname from  DEPARTMENTS")
 	if err != nil {
 		writeErrorLog("Query Error" + err.Error())
 		return
@@ -370,126 +369,105 @@ func getData() {
 	//dept flag
 	flag := 0
 
+	var deptnumber map[int]string = make(map[int]string,0)
+
 	for row.Next() {
-		var deptnum string
-		var useridstr string
-		var idstr string
-		var dept1 Dept
-		if err := row.Scan(&deptnum, &useridstr, &idstr); err == nil {
+		var deptname string
+		if err := row.Scan(&deptname); err == nil {
 			if localDebug {
-				fmt.Println(deptnum, useridstr, idstr)
+				fmt.Println(deptname)
 			}
 			//			fmt.Println(deptnum, userid, id)
-			deptnum = gbk_utf_8(deptnum)
-			useridstr = gbk_utf_8(useridstr)
-			idstr = gbk_utf_8(idstr)
-
-			if deptjud[deptnum] == false {
-				deptjud[deptnum] = true
-				dept1.isExist = true
-				dept1.deptnum = deptnum
-				dept[flag] = dept1
-				flag++
-			}
-
-			if localDebug == true {
-				fmt.Println(dept1)
-			}
-
-			var a User
-			a.id = idstr
-			a.userid = useridstr
-			a.deptment = deptnum
-			//			q := strconv.Itoa(i)
-			user[idstr] = a
-
-			if localDebug == true {
-				fmt.Println(a)
-			}
+			deptname = gbk_utf_8(deptname)
+			deptnumber[flag]=deptname
+			flag=flag+1
+			createPartDir(deptname)
+	
 		}
-
-		if localDebug == true {
-			fmt.Println(user)
-		}
-
-		//	fmt.Println(user)
-
 	}
+
+	fmt.Println("test")
 
 	// stmt, err = conn.Prepare("SELECT checktype,checktime,userid from CHECKINOUT ")
-	stmt, err = conn.Prepare("SELECT checktype,checktime,userid from CHECKINOUT where DateDiff(n,CHECKTIME,getdate())<=" + UpdateTime)
-	if err != nil {
-		writeErrorLog("Query Error" + err.Error())
-		return
-	}
-	// fmt.Println(stmt)
-	defer stmt.Close()
+	for _,deptname := range deptnumber {
+		stmt, err = conn.Prepare("select checktype,checktime,qiandaouser.userid,deptname,badgenumber from qiandaouser,kaoqin where qiandaouser.userid = kaoqin.userid and deptname=" + "'"+deptname+"'")
+		if err != nil {
+			writeErrorLog("Query Error" + err.Error())
+			return
+		}
+		fmt.Println(stmt,deptname)
+		defer stmt.Close()
 
-	row, err = stmt.Query()
+		row, err = stmt.Query()
 
-	if err != nil {
-		writeErrorLog("Query Error" + err.Error())
-		return
-	}
+		if err != nil {
+			writeErrorLog("Query Error" + err.Error())
+			return
+		}
 	// fmt.Println(row)
-	defer row.Close()
+		defer row.Close()
 
-	index := 0
-	for row.Next() {
-		var checktype string
-		var checktime string
-		var uid string
-		if err := row.Scan(&checktype, &checktime, &uid); err == nil {
+		var message []string=make([]string,0)
+		for row.Next() {
+			var checktype string
+			var checktime string
+			var uid string
+			var deptname string 
+			var badgenumber string 
+			if err := row.Scan(&checktype, &checktime, &uid,&deptname,&badgenumber); err == nil {
+				if localDebug == true {
+					fmt.Println(checktype, checktime, uid,deptname,badgenumber)
+				}
+				checktype=gbk_utf_8(checktype)
+				checktime=gbk_utf_8(checktime)
+				uid=gbk_utf_8(uid)
+				deptname=gbk_utf_8(deptname)
+				badgenumber=gbk_utf_8(badgenumber)
+
+				// fmt.Println("*****************************8")
+				var checktypei string
+				switch checktype {
+				case "I":
+					checktypei = "In"
+				case "O":
+					checktypei = "Out"
+				default:
+					continue
+				}
+				var b Info
+				b.uid = uid
+				b.inout = checktypei
+				b.date = checktime[0:4] + checktime[5:7] + checktime[8:10]
+				b.time = checktime[11:13] + checktime[14:16]
+				b.badgenumber = badgenumber
+				b.deptname = deptname
+
+				mess:=b.deptname+","+b.uid+","+b.inout+","+b.date+","+b.time+ "\n"
+				message=append(message,mess)
+				fmt.Println(mess)
+			}
+
 			if localDebug == true {
-				fmt.Println(checktype, checktime, uid)
+				fmt.Println(info)
 			}
-			checktype=gbk_utf_8(checktype)
-			checktime=gbk_utf_8(checktime)
-			uid=gbk_utf_8(uid)
-
-			// fmt.Println("*****************************8")
-			var checktypei string
-			switch checktype {
-			case "I":
-				checktypei = "In"
-			case "O":
-				checktypei = "Out"
-			default:
-				continue
-			}
-			var b Info
-			// b.uid = int(uid)
-			b.uid = uid
-			b.inout = checktypei
-			b.date = checktime[0:4] + checktime[5:7] + checktime[8:10]
-			b.time = checktime[11:13] + checktime[14:16]
-			indexstr := strconv.Itoa(index)
-			info[indexstr] = b
-			index++
 		}
-
-		if localDebug == true {
-			fmt.Println(info)
-		}
-
-		return
+		length:=len(message)
+		write(deptname, message, length)
 	}
 }
 
 //创建部门目录
-func createPartDir() {
-	deptMapLen := len(dept)
-	for i := 0; i < deptMapLen; i++ {
-		dir, err := os.Open(FilePath + "/" + dept[i].deptnum)
+func createPartDir(deptname string) {
+		dir, err := os.Open(FilePath + "/" + deptname)
 		if err != nil {
-			err := os.Mkdir(FilePath+"/"+dept[i].deptnum, os.ModePerm)
+			err := os.MkdirAll(FilePath+"/"+deptname+"/"+"READ", os.ModePerm)
 			if err != nil {
-				writeErrorLog("Mkdir " + FilePath + dept[i].deptnum + " Error")
+				writeErrorLog("Mkdir " + FilePath + deptname + " Error")
 			}
 		}
 		dir.Close()
-	}
 }
+
 
 //创建文件，函数
 func createFile(path, name string) {
@@ -510,11 +488,13 @@ func write(deptment string, message []string, lenth int) {
 	// var filenamebak string
 	filename = QIANZHUI + time.Now().String()[0:4] + time.Now().String()[5:7] + time.Now().String()[8:10] + ".csv"
 	// filenamebak = QIANZHUI + time.Now().String()[0:4] + time.Now().String()[5:7] + time.Now().String()[8:10] + "_" + time.Now().String()[11:13] + time.Now().String()[14:16] + "_" + deptment + ".csv"
-
-	filepath := FilePath + "/" + deptment  + "/" + "READ" + "/" + filename
+	if deptment == "" {
+		return
+	}
+	filepath := FilePath + "/" + deptment + "/" + "READ" + "/" + filename
 	// filepathbak := FilePathBak + "/" + deptment + "/" + "READ" + "/" + filenamebak
 
-	file, err := os.OpenFile(filepath, os.O_WRONLY|os.O_CREATE, os.ModePerm)
+	file, err := os.OpenFile(filepath,os.O_CREATE|os.O_APPEND|os.O_WRONLY, os.ModePerm)
 	if err != nil {
 		writeErrorLog("Create File " + filepath + " Error !")
 	}
